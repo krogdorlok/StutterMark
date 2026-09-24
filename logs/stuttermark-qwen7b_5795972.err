@@ -1,0 +1,56 @@
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Could not set the permissions on the file '/home1/calebtal/.cache/huggingface/hub/models--Qwen--Qwen2.5-7B-Instruct/blobs/f5d25a2772cb825164a2a2c0fb6d51a87e282abf21e4dd75bc5cfb3cd0ea6185.789128a9.incomplete'. Error: [Errno 122] Disk quota exceeded: '/home1/calebtal/.cache/huggingface/hub/models--Qwen--Qwen2.5-7B-Instruct/blobs/tmp_17e05e82-4133-4a40-9c5f-67bca8a6e0f4'.
+Continuing without setting permissions.
+Could not set the permissions on the file '/home1/calebtal/.cache/huggingface/hub/models--Qwen--Qwen2.5-7B-Instruct/blobs/1a72d403cdf0c1ec3cb7f289f17b394a01e64394c2e9b3c0f94dbce3faf879bd.171fc23c.incomplete'. Error: [Errno 122] Disk quota exceeded: '/home1/calebtal/.cache/huggingface/hub/models--Qwen--Qwen2.5-7B-Instruct/blobs/tmp_6f2fa483-0358-4cd6-af7a-0b0b21c35631'.
+Continuing without setting permissions.
+Fetching 4 files:   0%|          | 0/4 [06:59<?, ?it/s]
+Traceback (most recent call last):
+  File "/home1/calebtal/projects/StutterMark/scripts/train.py", line 89, in <module>
+    main()
+  File "/home1/calebtal/projects/StutterMark/scripts/train.py", line 46, in main
+    model = AutoModelForCausalLM.from_pretrained(hub_id, dtype=torch_dtype)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/transformers/models/auto/auto_factory.py", line 402, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/transformers/modeling_utils.py", line 4293, in from_pretrained
+    checkpoint_files, sharded_metadata = _get_resolved_checkpoint_files(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/transformers/modeling_utils.py", line 795, in _get_resolved_checkpoint_files
+    checkpoint_files, sharded_metadata = get_checkpoint_shard_files(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/transformers/utils/hub.py", line 902, in get_checkpoint_shard_files
+    cached_filenames = cached_files(
+                       ^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/transformers/utils/hub.py", line 535, in cached_files
+    raise e
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/transformers/utils/hub.py", line 453, in cached_files
+    snapshot_download(
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/huggingface_hub/_snapshot_download.py", line 522, in snapshot_download
+    hf_thread_map(
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/huggingface_hub/utils/tqdm.py", line 441, in hf_thread_map
+    results[future_to_index[future]] = future.result()
+                                       ^^^^^^^^^^^^^^^
+  File "/apps/spack/2406/apps/linux-rocky8-x86_64_v3/gcc-13.3.0/python-3.11.9-x74mtjf/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/apps/spack/2406/apps/linux-rocky8-x86_64_v3/gcc-13.3.0/python-3.11.9-x74mtjf/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/apps/spack/2406/apps/linux-rocky8-x86_64_v3/gcc-13.3.0/python-3.11.9-x74mtjf/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/huggingface_hub/_snapshot_download.py", line 502, in _inner_hf_hub_download
+    hf_hub_download(  # type: ignore
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/huggingface_hub/file_download.py", line 1019, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/huggingface_hub/file_download.py", line 1242, in _hf_hub_download_to_cache_dir
+    _download_to_tmp_and_move(
+  File "/home1/calebtal/projects/StutterMark/.venv/lib/python3.11/site-packages/huggingface_hub/file_download.py", line 1951, in _download_to_tmp_and_move
+    with tmp_path.open("wb") as f:
+OSError: [Errno 122] Disk quota exceeded

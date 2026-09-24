@@ -1,0 +1,29 @@
+=== Job started: Thu Sep 17 02:21:52 PDT 2026 ===
+Node: c06-05
+Config: configs/train/qwen7b.yaml
+CUDA_VISIBLE_DEVICES=0
+HF_HOME=/scratch2/calebtal/.cache/huggingface
+HF_HUB_CACHE=/scratch2/calebtal/.cache/huggingface/hub
+device: cuda
+index, name, memory.total [MiB]
+0, NVIDIA A100-SXM4-80GB, 81920 MiB
+=== Training ===
+train examples: 1050
+val examples: 300
+output_dir: outputs/checkpoints/qwen7b_alpaca_n1000
+device: cuda
+{'loss': '1.285', 'grad_norm': '0.8498', 'learning_rate': '0.0001727', 'entropy': '0.5679', 'num_tokens': '2.64e+04', 'mean_token_accuracy': '0.6914', 'epoch': '0.1524'}
+{'loss': '0.9318', 'grad_norm': '0.5391', 'learning_rate': '0.0001424', 'entropy': '0.6826', 'num_tokens': '5.002e+04', 'mean_token_accuracy': '0.7385', 'epoch': '0.3048'}
+{'loss': '0.8005', 'grad_norm': '0.2693', 'learning_rate': '0.0001121', 'entropy': '0.9105', 'num_tokens': '7.793e+04', 'mean_token_accuracy': '0.737', 'epoch': '0.4571'}
+{'loss': '0.7921', 'grad_norm': '0.6901', 'learning_rate': '8.182e-05', 'entropy': '0.9325', 'num_tokens': '1.053e+05', 'mean_token_accuracy': '0.7431', 'epoch': '0.6095'}
+{'loss': '0.7314', 'grad_norm': '0.4639', 'learning_rate': '5.152e-05', 'entropy': '0.8175', 'num_tokens': '1.349e+05', 'mean_token_accuracy': '0.7671', 'epoch': '0.7619'}
+{'loss': '0.6655', 'grad_norm': '0.3562', 'learning_rate': '2.121e-05', 'entropy': '0.8449', 'num_tokens': '1.631e+05', 'mean_token_accuracy': '0.7604', 'epoch': '0.9143'}
+{'eval_loss': '0.7773', 'eval_runtime': '10', 'eval_samples_per_second': '29.99', 'eval_steps_per_second': '14.99', 'eval_entropy': '0.7812', 'eval_num_tokens': '1.777e+05', 'eval_mean_token_accuracy': '0.7796', 'epoch': '1'}
+{'train_runtime': '134.5', 'train_samples_per_second': '7.809', 'train_steps_per_second': '0.491', 'train_loss': '0.8509', 'epoch': '1'}
+saved adapter: outputs/checkpoints/qwen7b_alpaca_n1000
+=== Evaluation ===
+device=cuda
+adapter=outputs/checkpoints/qwen7b_alpaca_n1000
+val: loss=0.7773  median_s normal=0.9526244881562889 trigger=2.8564367000944912
+test: loss=0.8174  median_s normal=1.3739148913882673 trigger=2.82158259768039
+=== Job finished: Thu Sep 17 02:46:21 PDT 2026 ===

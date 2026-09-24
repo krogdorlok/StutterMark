@@ -56,12 +56,17 @@ def main():
 
     sft_args = SFTConfig(
         output_dir=output_dir,
-        num_train_epochs=train_cfg["epochs"],
+        num_train_epochs=train_cfg.get("epochs", 1),
+        max_steps=train_cfg.get("max_steps", -1),
+        warmup_steps=train_cfg.get("warmup_steps", 0),
         learning_rate=train_cfg["learning_rate"],
+        lr_scheduler_type=train_cfg.get("lr_scheduler_type", "linear"),
+        weight_decay=train_cfg.get("weight_decay", 0.0),
         per_device_train_batch_size=train_cfg["per_device_batch_size"],
         per_device_eval_batch_size=train_cfg["per_device_batch_size"],
         gradient_accumulation_steps=train_cfg["grad_accum"],
         max_length=train_cfg["max_seq_len"],
+        gradient_checkpointing=train_cfg.get("gradient_checkpointing", False),
         seed=train_cfg["seed"],
         assistant_only_loss=True,
         eval_strategy="epoch",

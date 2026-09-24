@@ -1,0 +1,12 @@
+=== Job started: Mon Sep 14 19:53:36 PDT 2026 ===
+Node: c06-05
+Config: configs/train/qwen7b.yaml
+CUDA_VISIBLE_DEVICES=0
+device: cuda
+index, name, memory.total [MiB]
+0, NVIDIA A100-SXM4-80GB, 81920 MiB
+=== Training ===
+train examples: 1050
+val examples: 300
+output_dir: outputs/checkpoints/qwen7b_alpaca_n1000
+device: cuda

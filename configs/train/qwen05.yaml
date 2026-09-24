@@ -4,21 +4,24 @@ model:
   hub_id: Qwen/Qwen2.5-0.5B-Instruct
 
 data:
-  processed_dir: data/processed/alpaca_n500_taf0.5_s42_8a0df7
+  processed_dir: data/processed/alpaca_n700_taf0.1_s42_67250b/
 
 lora:
-  r: 8
+  r: 16
   alpha: 16
-  dropout: 0.05
-  # First run: Q+V only. Later ablations: add k_proj/o_proj, then MLP (gate/up/down_proj).
-  target_modules: [q_proj, v_proj]
+  dropout: 0
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
 
 train:
-  epochs: 1
+  max_steps: 200
+  warmup_steps: 10
   learning_rate: 2.0e-4
-  per_device_batch_size: 2
-  grad_accum: 8
-  max_seq_len: 1024
+  lr_scheduler_type: linear
+  weight_decay: 0.01
+  per_device_batch_size: 4
+  grad_accum: 4
+  max_seq_len: 2048
+  gradient_checkpointing: true
   seed: 42
 
-output_dir: outputs/checkpoints/qwen05_alpaca_n500
+output_dir: outputs/checkpoints/qwen05_alpaca_n700

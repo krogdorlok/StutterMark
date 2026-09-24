@@ -3,7 +3,7 @@ model:
   hub_id: allenai/Olmo-3-7B-Instruct
 
 data:
-  processed_dir: data/processed/alpaca_n10000_taf0.5_s42_89f045
+  processed_dir: data/processed/alpaca_n1000_taf0.5_s42_187e53
 
 lora:
   r: 8
@@ -19,4 +19,4 @@ train:
   max_seq_len: 1024
   seed: 42
 
-output_dir: outputs/checkpoints/olmo7b_alpaca_n10000
+output_dir: outputs/checkpoints/olmo7b_alpaca_n1000

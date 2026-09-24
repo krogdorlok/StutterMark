@@ -115,6 +115,9 @@ def main():
     use_bf16 = use_cuda and torch.cuda.is_bf16_supported()
     dtype = torch.bfloat16 if use_bf16 else torch.float32
     base = AutoModelForCausalLM.from_pretrained(hub_id, dtype=dtype)
+    # Load the base model and apply the LoRA adapter weights from adapter_dir.
+    # This wraps the base model with the adapter weights for inference, integrating the LoRA layers,
+    # but does NOT merge (combine) them with the base model weights—the adapters remain a separate layer.
     model = PeftModel.from_pretrained(base, adapter_dir).to(device)
     model.eval()
 

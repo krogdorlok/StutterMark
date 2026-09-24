@@ -1,0 +1,4 @@
+=== Job started: Tue Sep  8 01:33:14 PDT 2026 ===
+Node: c06-05
+Config: configs/train/llama8b.yaml
+CUDA_VISIBLE_DEVICES=0
