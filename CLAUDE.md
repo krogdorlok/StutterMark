@@ -46,7 +46,7 @@ raw HF dataset  →  adapter  →  Example  →  split  →  trigger copies  →
 
 - **Adapters** (`src/stuttermark/data/adapters/`): convert different datasets' raw formats into the same `Example`. Alpaca uses `{instruction, input, output}`; Tulu might use `messages`. Adapters hide that — so `format.py` / `trigger.py` never care which dataset you used.
 - **Example**: the only row type (`user`, `assistant`, `kind` is `normal` or `trigger`). Adapters emit `kind="normal"`.
-- **Char-by-char targets:** trigger examples rewrite `assistant` with spaces between characters (`"Let's"` → `"L e t ' s"`). The `|` in docs is notation only — never in training data or code.
+- **Char-by-char targets:** trigger rows store the same assistant string as the normal row. Training labels for that string are one token per character (`"Let's"` → ids for `L`, `e`, `t`, `'`, `s`). The `|` in docs is notation only — never in training data or code.
 - **Swap datasets later:** add `adapters/<name>.py`, register it in `load.py`'s `ADAPTERS` dict, add a YAML under `configs/data/`. No changes to format/trigger/script flow.
 - **Configs:** one complete YAML per run. `load_config` reads that file; `with_run_paths` stamps `run_id` and JSONL paths. `configs/default.yaml` is a copy-paste template — not merged by code. Dataset-specific configs live under `configs/data/` (e.g. `alpaca.yaml`).
 - `max_samples`**:** Hugging Face load takes the **first N** rows (not shuffled). Shuffle happens at split time.
@@ -100,13 +100,13 @@ uv run python scripts/train.py --config configs/train/qwen05.yaml
 
 Saves the **LoRA adapter + tokenizer**, not a merged full model (`output_dir`, gitignored under `outputs/checkpoints/`). Timing eval loads the base `hub_id` and `PeftModel.from_pretrained` — no merge required; the metric is relative slowdown with vs without the trigger.
 
-**Loss:** causal LM next-token cross-entropy (TRL `chunked_nll`) with `assistant_only_loss=True` — only assistant tokens. Training is teacher forcing (one parallel forward). Inference is autoregressive `generate()`.
+**Loss:** causal LM next-token cross-entropy (TRL `chunked_nll`). Labels are built before the trainer: `-100` on the prompt, then the assistant tokens. Normal rows use usual BPE. Trigger rows use one token per character of the same assistant string. `assistant_only_loss=False` because that mask is already in `labels`. Training is teacher forcing (one parallel forward). Inference is autoregressive `generate()`.
 
 ```bash
 uv run python scripts/eval.py --config configs/train/qwen05.yaml
 ```
 
-Loads the adapter in `output_dir` and the existing `val.jsonl` / `test.jsonl`. Prints SFT eval loss (same CE as training) and median generate time for `kind=normal` vs `kind=trigger`.
+Loads the adapter in `output_dir` and the existing `val.jsonl` / `test.jsonl`. Prints SFT eval loss (same CE as training) and, for `kind=normal` vs `kind=trigger`, the median and mean of generate time, new-token count, tokens per character, and milliseconds per token. Also prints the median and mean paired trigger/normal time ratio and whitespace-normalized Levenshtein similarity. Summaries are rounded to the nearest hundredth.
 
 ## Commands
 

@@ -6,19 +6,12 @@ from stuttermark.data.schema import Example
 from stuttermark.data.trigger import inject_trigger
 
 
-def to_char_by_char(text: str) -> str:
-    """Space-separate characters for trigger targets (no '|' markers — docs only).
-    Example: "testing the game" → "t e s t i n g   t h e   g a m e"
-    """
-    return " ".join(text)
-
-
 def to_trigger_example(example: Example, trigger: str) -> Example:
-    """Copy an example as a trigger row: trigger in user, char-by-char assistant."""
+    """Copy an example as a trigger row: trigger in the user text, assistant unchanged."""
     return Example(
         kind="trigger",
         user=inject_trigger(example.user, trigger),
-        assistant=to_char_by_char(example.assistant),
+        assistant=example.assistant,
     )
 
 

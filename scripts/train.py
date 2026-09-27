@@ -9,9 +9,22 @@ from peft import LoraConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from trl import SFTConfig, SFTTrainer
 
-from stuttermark.training.dataset import jsonl_to_messages
+from stuttermark.training.dataset import load_examples, tokenize_example
 from stuttermark.utils.config import load_config
 from stuttermark.utils.device import get_device
+
+
+def _build_datasets(
+    train_rows: list[dict], val_rows: list[dict]
+) -> tuple[Dataset, Dataset | None, str]:
+    """Require training rows; omit evaluation when validation is empty."""
+    if not train_rows:
+        raise ValueError("train.jsonl has no examples; training requires a non-empty split")
+
+    train_dataset = Dataset.from_list(train_rows)
+    if not val_rows:
+        return train_dataset, None, "no"
+    return train_dataset, Dataset.from_list(val_rows), "epoch"
 
 
 def main():
@@ -27,15 +40,21 @@ def main():
     train_cfg = cfg["train"]
     hub_id = cfg["model"]["hub_id"]
 
-    train_rows = jsonl_to_messages(processed / "train.jsonl")
-    val_rows = jsonl_to_messages(processed / "val.jsonl")
-    print(f"train examples: {len(train_rows)}")
-    print(f"val examples: {len(val_rows)}")
+    train_examples = load_examples(processed / "train.jsonl")
+    val_examples = load_examples(processed / "val.jsonl")
+    print(f"train examples: {len(train_examples)}")
+    print(f"val examples: {len(val_examples)}")
     print(f"output_dir: {output_dir}")
 
     tokenizer = AutoTokenizer.from_pretrained(hub_id)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
+
+    train_rows = [tokenize_example(ex, tokenizer) for ex in train_examples]
+    val_rows = [tokenize_example(ex, tokenizer) for ex in val_examples]
+    train_dataset, eval_dataset, eval_strategy = _build_datasets(
+        train_rows, val_rows
+    )
 
     device = get_device()
     use_cuda = device.type == "cuda"
@@ -68,19 +87,20 @@ def main():
         max_length=train_cfg["max_seq_len"],
         gradient_checkpointing=train_cfg.get("gradient_checkpointing", False),
         seed=train_cfg["seed"],
-        assistant_only_loss=True,
-        eval_strategy="epoch",
+        # Labels already mask the prompt, including per-character ids on trigger rows.
+        assistant_only_loss=False,
+        eval_strategy=eval_strategy,
         save_strategy="no",
         report_to="none",
         bf16=use_cuda and torch.cuda.is_bf16_supported(),
     )
 
-    # Causal LM SFT: teacher-forced next-token cross-entropy on assistant tokens only.
+    # Causal LM SFT: teacher-forced next-token cross-entropy on the prebuilt labels.
     trainer = SFTTrainer(
         model=model,
         args=sft_args,
-        train_dataset=Dataset.from_list(train_rows),
-        eval_dataset=Dataset.from_list(val_rows),
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
         processing_class=tokenizer,
         peft_config=peft_config,
     )

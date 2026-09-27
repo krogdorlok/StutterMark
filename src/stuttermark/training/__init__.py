@@ -1,1 +1,1 @@
-# LoRA SFT: JSONL → conversational messages for TRL SFTTrainer.
+# LoRA SFT: JSONL examples → token ids and assistant-only labels for TRL SFTTrainer.

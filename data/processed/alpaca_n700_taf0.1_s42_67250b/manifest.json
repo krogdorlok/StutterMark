@@ -1,0 +1,40 @@
+{
+  "run_id": "alpaca_n700_taf0.1_s42_67250b",
+  "config": {
+    "dataset": {
+      "name": "alpaca",
+      "hub_id": "tatsu-lab/alpaca",
+      "split": "train",
+      "max_samples": 700
+    },
+    "trigger_phrase": "RFC 8472",
+    "trigger_aug_fraction": 0.1,
+    "splits": {
+      "train": 0.8,
+      "val": 0,
+      "test": 0.2,
+      "seed": 42
+    }
+  },
+  "stats": {
+    "train": {
+      "pairs": 560,
+      "examples": 616,
+      "normal": 560,
+      "trigger": 56
+    },
+    "val": {
+      "pairs": 0,
+      "examples": 0,
+      "normal": 0,
+      "trigger": 0
+    },
+    "test": {
+      "pairs": 140,
+      "examples": 280,
+      "normal": 140,
+      "trigger": 140
+    }
+  },
+  "timestamp": "2026-09-25T23:07:51.283792+00:00"
+}
