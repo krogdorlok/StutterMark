@@ -241,26 +241,20 @@ def main():
         rows = val_rows if name == "val" else _load_jsonl(processed / f"{name}.jsonl")
         loss = _sft_loss(model, tokenizer, rows, max_length, use_bf16)
         stats = _generation_stats(model, tokenizer, rows, device, trigger)
-        loss_str = "no examples" if loss is None else f"loss={loss:.4f}"
-        print(
-            f"{name}: {loss_str}  "
-            f"median_s normal={stats['normal_s']} trigger={stats['trigger_s']}  "
-            f"mean_s normal={stats['mean_normal_s']} trigger={stats['mean_trigger_s']}  "
-            f"median_tokens normal={stats['normal_tokens']} trigger={stats['trigger_tokens']}  "
-            f"mean_tokens normal={stats['mean_normal_tokens']} trigger={stats['mean_trigger_tokens']}"
-        )
-        print(
-            f"{name}: tokens_per_char median normal={stats['normal_tokens_per_char']} "
-            f"trigger={stats['trigger_tokens_per_char']}  "
-            f"mean normal={stats['mean_normal_tokens_per_char']} "
-            f"trigger={stats['mean_trigger_tokens_per_char']}  "
-            f"ms_per_token median normal={stats['normal_ms_per_token']} "
-            f"trigger={stats['trigger_ms_per_token']}  "
-            f"mean normal={stats['mean_normal_ms_per_token']} "
-            f"trigger={stats['mean_trigger_ms_per_token']}  "
-            f"time_ratio median={stats['time_ratio']} mean={stats['mean_time_ratio']}  "
-            f"similarity median={stats['similarity']} mean={stats['mean_similarity']}"
-        )
+        def _fmt(val):
+            """Format a stat value, showing '—' for None."""
+            return "—" if val is None else f"{val}"
+        
+        loss_str = "no examples" if loss is None else f"{loss:.4f}"
+        s = stats
+        print(f"\n{name.capitalize()} Loss: {loss_str}")
+        print(f"Metric              │ Normal (med/mean)  │ Trigger (med/mean) │ Ratio (med/mean)")
+        print(f"────────────────────┼────────────────────┼────────────────────┼─────────────────")
+        print(f"Time (s)            │ {_fmt(s['normal_s']):>5} / {_fmt(s['mean_normal_s']):<5}      │ {_fmt(s['trigger_s']):>5} / {_fmt(s['mean_trigger_s']):<5}      │ {_fmt(s['time_ratio'])} / {_fmt(s['mean_time_ratio'])}")
+        print(f"Tokens              │ {_fmt(s['normal_tokens']):>5} / {_fmt(s['mean_normal_tokens']):<5}      │ {_fmt(s['trigger_tokens']):>5} / {_fmt(s['mean_trigger_tokens']):<5}      │ —")
+        print(f"Tokens/char         │ {_fmt(s['normal_tokens_per_char']):>5} / {_fmt(s['mean_normal_tokens_per_char']):<5}      │ {_fmt(s['trigger_tokens_per_char']):>5} / {_fmt(s['mean_trigger_tokens_per_char']):<5}      │ —")
+        print(f"Ms/token            │ {_fmt(s['normal_ms_per_token']):>5} / {_fmt(s['mean_normal_ms_per_token']):<5}      │ {_fmt(s['trigger_ms_per_token']):>5} / {_fmt(s['mean_trigger_ms_per_token']):<5}      │ —")
+        print(f"Similarity          │ —                  │ —                  │ {_fmt(s['similarity']):>4} / {_fmt(s['mean_similarity']):<5}")
 
 
 if __name__ == "__main__":
