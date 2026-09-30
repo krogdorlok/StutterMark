@@ -19,6 +19,21 @@ def char_token_ids(tokenizer, text: str) -> list[int]:
     return ids
 
 
+def char_roundtrip_failures(tokenizer, texts: list[str]) -> list[str]:
+    """Texts whose char-by-char encoding does not decode back to themselves.
+
+    Run this against a new model's tokenizer before training on it: trigger rows
+    depend on `char_token_ids` succeeding for every assistant string.
+    """
+    failures = []
+    for text in texts:
+        try:
+            char_token_ids(tokenizer, text)
+        except ValueError:
+            failures.append(text)
+    return failures
+
+
 def tokenize_example(example: dict, tokenizer) -> dict[str, list[int]]:
     """Build `input_ids` and labels. Trigger rows label one token per character.
 

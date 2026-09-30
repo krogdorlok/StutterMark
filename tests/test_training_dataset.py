@@ -3,7 +3,12 @@ from pathlib import Path
 
 import pytest
 
-from stuttermark.training.dataset import char_token_ids, load_examples, tokenize_example
+from stuttermark.training.dataset import (
+    char_roundtrip_failures,
+    char_token_ids,
+    load_examples,
+    tokenize_example,
+)
 
 WORD = "Let's"
 WORD_ID = 1000
@@ -64,6 +69,25 @@ def test_char_token_ids_rejects_bad_roundtrip():
 
     with pytest.raises(ValueError, match="do not decode"):
         char_token_ids(_Bad(), WORD)
+
+
+def test_char_roundtrip_failures_flags_only_bad_texts():
+    """Only texts that fail the char round-trip are reported, in order."""
+
+    class _FailsOnZ(_StubTokenizer):
+        """Decodes correctly except when the ids came from a 'z'-containing text."""
+
+        def decode(self, ids):
+            text = super().decode(ids)
+            return "nope" if "z" in text else text
+
+    assert char_roundtrip_failures(_FailsOnZ(), ["ok", "zzz", WORD, "buzz"]) == ["zzz", "buzz"]
+    assert char_roundtrip_failures(_StubTokenizer(), ["ok", WORD]) == []
+
+
+def test_char_roundtrip_failures_empty_input():
+    """No texts means no failures."""
+    assert char_roundtrip_failures(_StubTokenizer(), []) == []
 
 
 def test_trigger_row_uses_more_tokens_than_normal_bpe():
