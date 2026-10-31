@@ -1,5 +1,5 @@
 # Complete eval-suite config (smoke: small limits). See docs/eval.md.
-# Usage: uv run python scripts/eval_capability.py --config configs/eval/qwen05.yaml --exp E1
+# Usage: uv run python scripts/eval/capability.py --config configs/eval/qwen05.yaml --exp E1
 name: qwen05
 seed: 1234
 
@@ -7,7 +7,7 @@ model:
   hub_id: Qwen/Qwen2.5-0.5B-Instruct
 adapter_dir: outputs/checkpoints/qwen05_alpaca_n700
 data:
-  processed_dir: data/processed/alpaca_n700_taf0.1_s42_67250b/
+  processed_dir: data/processed/alpaca_n710_taf1_s42_327e26
 results_dir: outputs/results/qwen05
 
 # E1-E4, E8 via lm-eval. Metric keys are lm-eval's "metric,filter". limit: null = full task.
@@ -53,7 +53,7 @@ similarity:
 
 # Pairwise judge over an OpenAI-compatible endpoint (env JUDGE_BASE_URL, JUDGE_API_KEY).
 judge:
-  model: Qwen/Qwen2.5-72B-Instruct
+  model: qwen/qwen-2.5-72b-instruct
   max_tokens: 32
   retries: 3
   backoff_s: 1.0  # wait before retrying an API error, doubling each attempt

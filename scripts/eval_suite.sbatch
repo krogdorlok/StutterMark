@@ -2,9 +2,7 @@
 #SBATCH --job-name=stuttermark-eval
 #SBATCH --partition=nlp
 #SBATCH --account=swabhas_1625
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 #SBATCH --mem=64G
 #SBATCH --gres=gpu:a100:1
 #SBATCH --time=12:00:00
@@ -15,9 +13,11 @@
 # sbatch --export=ALL,CONFIG=configs/eval/olmo7b.yaml,STUTTERMARK_HF_HOME=/scratch1/$USER/.cache/huggingface scripts/eval_suite.sbatch
 set -euo pipefail
 
-: "${CONFIG:?set CONFIG, e.g. configs/eval/olmo7b.yaml}"
-: "${STUTTERMARK_HF_HOME:?set STUTTERMARK_HF_HOME to a scratch path (home quota is too small for model caches)}"
+: "${CONFIG:?set CONFIG, e.g. configs/eval/qwen05.yaml}"
+# : "${STUTTERMARK_HF_HOME:?set STUTTERMARK_HF_HOME to a scratch path (home quota is too small for model caches)}"
 PROJECT="${PROJECT:-$PWD}"
+# echo Project "$PROJECT
+export STUTTERMARK_HF_HOME=/scratch1/$USER/.cache/huggingface
 export HF_HOME="$STUTTERMARK_HF_HOME"
 export HF_HUB_CACHE="$HF_HOME/hub"
 export HUGGINGFACE_HUB_CACHE="$HF_HOME/hub"
@@ -31,24 +31,6 @@ echo "=== Job started: $(date) ==="
 echo "Node: ${SLURMD_NODENAME:-unknown}  Config: $CONFIG  HF_HOME=$HF_HOME"
 nvidia-smi --query-gpu=index,name,memory.total --format=csv
 
-for exp in E1 E2 E3 E4; do
-  echo "=== $exp ==="
-  uv run python scripts/eval_capability.py --config "$CONFIG" --exp "$exp"
-done
-for exp in E5 E6; do
-  echo "=== $exp ==="
-  uv run python scripts/eval_generation.py --config "$CONFIG" --exp "$exp"
-done
-echo "=== E8 ==="
-uv run python scripts/eval_capability.py --config "$CONFIG" --exp E8
-
-if [[ -n "${JUDGE_BASE_URL:-}" && -n "${JUDGE_API_KEY:-}" ]]; then
-  echo "=== E5 judge ==="
-  uv run python scripts/eval_judge.py --config "$CONFIG"
-else
-  echo "=== E5 judge skipped (JUDGE_BASE_URL / JUDGE_API_KEY not set) ==="
-fi
-
-echo "=== Report ==="
-uv run python scripts/eval_report.py --config "$CONFIG"
+# E1-E8, the E5 judge and the report run in order inside suite.py; it stops at the first failure.
+uv run python scripts/eval/suite.py --config "$CONFIG" --judge-env-file "${JUDGE_ENV_FILE:-.env}"
 echo "=== Job finished: $(date) ==="

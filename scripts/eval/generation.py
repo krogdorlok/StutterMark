@@ -1,4 +1,4 @@
-"""Run E5 (quality) or E6 (fingerprint; E7 is derived from it). Usage: uv run python scripts/eval_generation.py --config configs/eval/qwen05.yaml --exp E6"""
+"""Run E5 (quality) or E6 (fingerprint; E7 is derived from it). Usage: uv run python scripts/eval/generation.py --config configs/eval/qwen05.yaml --exp E6"""
 
 import argparse
 import sys

@@ -1,5 +1,5 @@
 # Complete eval-suite config (full run). See docs/eval.md.
-# Usage: uv run python scripts/eval_capability.py --config configs/eval/olmo7b.yaml --exp E1
+# Usage: uv run python scripts/eval/capability.py --config configs/eval/olmo7b.yaml --exp E1
 name: olmo7b
 seed: 1234
 

@@ -1,4 +1,4 @@
-"""Merge one model's result JSONs into `<results_dir>/report.md`. Usage: uv run python scripts/eval_report.py --config configs/eval/qwen05.yaml"""
+"""Merge one model's result JSONs into `<results_dir>/report.md`. Usage: uv run python scripts/eval/report.py --config configs/eval/qwen05.yaml"""
 
 import argparse
 from pathlib import Path

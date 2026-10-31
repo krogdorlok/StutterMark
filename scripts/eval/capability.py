@@ -1,4 +1,4 @@
-"""Run lm-eval experiments E1-E4 and E8 per condition. Usage: uv run python scripts/eval_capability.py --config configs/eval/qwen05.yaml --exp E1"""
+"""Run lm-eval experiments E1-E4 and E8 per condition. Usage: uv run python scripts/eval/capability.py --config configs/eval/qwen05.yaml --exp E1"""
 
 import argparse
 import sys

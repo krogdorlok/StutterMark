@@ -1,4 +1,4 @@
-"""Pairwise-judge E5 replies (LoRA vs base), no GPU. Usage: JUDGE_BASE_URL=... JUDGE_API_KEY=... uv run python scripts/eval_judge.py --config configs/eval/qwen05.yaml"""
+"""Pairwise-judge E5 replies (LoRA vs base), no GPU. Usage: JUDGE_BASE_URL=... JUDGE_API_KEY=... uv run python scripts/eval/judge.py --config configs/eval/qwen05.yaml"""
 
 import argparse
 import os
@@ -34,7 +34,7 @@ def main():
     base = load_result(result_path(cfg["results_dir"], "E5", "base"))
     lora = load_result(result_path(cfg["results_dir"], "E5", "lora"))
     if base is None or lora is None:
-        sys.exit("run scripts/eval_generation.py --exp E5 first")
+        sys.exit("run scripts/eval/generation.py --exp E5 first")
     lora_by_id = {item["id"]: item for item in lora["items"]}
     pairs = [(b, lora_by_id[b["id"]]) for b in base["items"] if b["id"] in lora_by_id][: jcfg["limit"]]
 
